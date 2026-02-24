@@ -119,6 +119,8 @@ if (guestBtn) {
 const weatherText = document.querySelector('.weather-text');
 const weatherHigh = document.querySelector('.weather-high');
 const weatherLow = document.querySelector('.weather-low');
+const visitTodayTargets = document.querySelectorAll('[data-visit-today]');
+const visitTotalTargets = document.querySelectorAll('[data-visit-total]');
 
 const calendars = document.querySelectorAll('.mini-calendar');
 const galleryTabs = document.querySelectorAll('[data-gallery-tabs]');
@@ -286,6 +288,40 @@ async function fetchWeather() {
 }
 
 fetchWeather();
+
+function formatVisitCount(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return '--';
+  return num.toLocaleString('ko-KR');
+}
+
+function renderVisitCounts(today, total) {
+  const todayText = `today ${formatVisitCount(today)}`;
+  const totalText = `total ${formatVisitCount(total)}`;
+
+  visitTodayTargets.forEach((el) => {
+    el.textContent = todayText;
+  });
+
+  visitTotalTargets.forEach((el) => {
+    el.textContent = totalText;
+  });
+}
+
+async function fetchVisitCounts() {
+  if (!visitTodayTargets.length || !visitTotalTargets.length) return;
+
+  try {
+    const res = await fetch('/counter', { method: 'POST' });
+    if (!res.ok) return;
+    const data = await res.json();
+    renderVisitCounts(data.today, data.total);
+  } catch (error) {
+    console.warn('visit counter fetch failed', error);
+  }
+}
+
+fetchVisitCounts();
 
 function formatKstParts(date) {
   const parts = new Intl.DateTimeFormat('en-CA', {

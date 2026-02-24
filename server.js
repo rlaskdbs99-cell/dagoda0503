@@ -7,6 +7,14 @@ const { URL } = require('url');
 const root = process.cwd();
 const port = 5173;
 const SERVICE_KEY = 'd23cbd40d31221df16b94635b47a730d8468f69c95dd8f7b84eea3581d749259';
+let localTotalCount = 0;
+const localTodayKey = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Seoul',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+}).format(new Date()).replaceAll('-', '');
+const localDailyCounts = { [localTodayKey]: 0 };
 
 const mime = {
   '.html': 'text/html; charset=utf-8',
@@ -20,6 +28,28 @@ const mime = {
 };
 
 const server = http.createServer((req, res) => {
+  if (req.url.startsWith('/counter')) {
+    const todayKey = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date()).replaceAll('-', '');
+
+    if (!localDailyCounts[todayKey]) {
+      localDailyCounts[todayKey] = 0;
+    }
+
+    if (req.method === 'POST') {
+      localTotalCount += 1;
+      localDailyCounts[todayKey] += 1;
+    }
+
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ today: localDailyCounts[todayKey], total: localTotalCount }));
+    return;
+  }
+
   if (req.url.startsWith('/weather')) {
     const reqUrl = new URL(req.url, `http://localhost:${port}`);
     const params = reqUrl.searchParams;
