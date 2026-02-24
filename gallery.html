@@ -1,0 +1,245 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>갤러리</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-noise" aria-hidden="true"></div>
+  <div class="page">
+    <header class="topbar">
+      <div class="logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">PORTFOLIO</span>
+      </div>
+      <nav class="tabs" aria-label="메인 탭">
+        <a class="tab" href="index.html">home</a>
+        <a class="tab" href="notice.html">notice</a>
+        <a class="tab is-active" href="gallery.html">gallery</a>
+        <a class="tab" href="work.html">work</a>
+        <a class="tab" href="guest.html">guest</a>
+      </nav>
+      <div class="status status--hidden">today 021 / total 10,248</div>
+    </header>
+
+    <main class="layout layout--single">
+      <section class="panel profile" aria-label="프로필">
+        <div class="panel-title">profile</div>
+        <div class="avatar-frame">
+          <div class="avatar"></div>
+        </div>
+        <ul class="profile-meta">
+          <li>
+            <span class="name-chip">
+              <span class="icon-slot" aria-hidden="true"></span>
+              윤나 yoonna
+            </span>
+          </li>
+        </ul>
+        <div class="sns-box">
+          <div class="sns-title">sns</div>
+          <ul class="sns-list">
+            <li class="sns-item twitter">Twitter</li>
+            <li class="sns-item instagram">Instagram</li>
+            <li class="sns-item grafolio">Grafolio</li>
+          </ul>
+          <div class="mail-line">MAIL : dagoda0503@gmail.com</div>
+        </div>
+        <div class="mini-calendar" aria-label="달력">
+          <div class="cal-header">2026.02</div>
+          <div class="cal-grid">
+            <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+            <span class="muted">1</span><span class="muted">2</span><span class="muted">3</span><span class="muted">4</span><span class="muted">5</span><span class="muted">6</span><span class="muted">7</span>
+            <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+            <span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
+            <span>22</span><span>23</span><span class="is-today">24</span><span>25</span><span>26</span><span>27</span><span>28</span>
+          </div>
+        </div>
+        <div class="mood-box">
+          <div class="mood-label">weather</div>
+          <div class="weather-box">
+            <div class="weather-row">
+              <span class="weather-icon" aria-hidden="true"></span>
+              <span class="weather-text">불러오는 중</span>
+            </div>
+            <div class="weather-row">
+              <span class="weather-label">최고</span>
+              <span class="weather-high">--°</span>
+            </div>
+            <div class="weather-row">
+              <span class="weather-label">최저</span>
+              <span class="weather-low">--°</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel canvas" aria-label="갤러리">
+        <div class="panel-title">gallery</div>
+        <section class="gallery" aria-label="홈페이지">
+          <div class="gallery-title">홈페이지</div>
+          <div class="gallery-grid">
+            <button class="card card-button" type="button" data-detail="web-post">
+              <div class="thumb"></div>
+              <div class="card-title">포트폴리오 홈페이지</div>
+            </button>
+            <button class="card card-button" type="button" data-detail="web-post-2">
+              <div class="thumb"></div>
+              <div class="card-title">다른 홈페이지</div>
+            </button>
+          </div>
+        </section>
+
+        <section class="gallery" aria-label="아이콘">
+          <div class="gallery-title">아이콘</div>
+          <div class="gallery-grid">
+            <button class="card card-button" type="button" data-detail="icon-post">
+              <div class="thumb"></div>
+              <div class="card-title">아이콘 작업</div>
+            </button>
+          </div>
+        </section>
+
+        <section class="gallery" aria-label="개인작">
+          <div class="gallery-title">개인작</div>
+          <div class="gallery-grid">
+            <button class="card card-button" type="button" data-detail="personal-post">
+              <div class="thumb"></div>
+              <div class="card-title">개인작 샘플</div>
+            </button>
+          </div>
+        </section>
+
+        <section class="gallery" aria-label="커미션">
+          <div class="gallery-title">커미션</div>
+          <div class="gallery-grid">
+            <button class="card card-button" type="button" data-detail="commission-post">
+              <div class="thumb"></div>
+              <div class="card-title">커미션 샘플</div>
+            </button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div class="modal" id="icon-post" aria-hidden="true">
+      <div class="modal-backdrop" data-close></div>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-label="아이콘 작업 상세">
+        <button class="modal-close" type="button" data-close>닫기</button>
+        <div class="post-detail">
+          <div class="post-title">아이콘 작업</div>
+          <div class="post-meta">2026.02 · icon series</div>
+          <div class="post-body">
+            <p>아이콘 작업의 기획, 스타일 가이드, 제작 과정, 마감 규칙을 정리한 페이지입니다.</p>
+            <p>톤: 둥근 모서리 · 저채도 그린 · 미니멀 라인</p>
+            <p>크기: 24px / 32px / 48px</p>
+          </div>
+          <div class="post-gallery">
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="web-post" aria-hidden="true">
+      <div class="modal-backdrop" data-close></div>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-label="포트폴리오 홈페이지 상세">
+        <button class="modal-close" type="button" data-close>닫기</button>
+        <div class="post-detail">
+          <div class="post-title">포트폴리오 홈페이지</div>
+          <div class="post-meta">2026.02 · website</div>
+          <div class="post-body">
+            <p>미니홈피 감성을 기반으로 구성한 메인 포트폴리오입니다.</p>
+            <p>톤: 저채도 그린 · 타자기 타입 · 종이 질감</p>
+            <p>구성: 프로필 / 갤러리 / 워크데스크 / 타임라인</p>
+          </div>
+          <div class="post-gallery">
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="web-post-2" aria-hidden="true">
+      <div class="modal-backdrop" data-close></div>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-label="다른 홈페이지 상세">
+        <button class="modal-close" type="button" data-close>닫기</button>
+        <div class="post-detail">
+          <div class="post-title">다른 홈페이지</div>
+          <div class="post-meta">2026.01 · website</div>
+          <div class="post-body">
+            <p>브랜드 소개를 중심으로 한 구조적 레이아웃을 적용했습니다.</p>
+            <p>톤: 미니멀 · 그리드 · 명확한 정보 구조</p>
+            <p>포인트: 카드형 섹션, 스크롤 흐름 정리</p>
+          </div>
+          <div class="post-gallery">
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="personal-post" aria-hidden="true">
+      <div class="modal-backdrop" data-close></div>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-label="개인작 상세">
+        <button class="modal-close" type="button" data-close>닫기</button>
+        <div class="post-detail">
+          <div class="post-title">개인작 샘플</div>
+          <div class="post-meta">2025.12 · personal</div>
+          <div class="post-body">
+            <p>아이디어 스케치와 실험을 모은 개인 프로젝트입니다.</p>
+            <p>키워드: 실험 / 기록 / 타이포</p>
+            <p>제작 도구: Figma · Illustrator</p>
+          </div>
+          <div class="post-gallery">
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="commission-post" aria-hidden="true">
+      <div class="modal-backdrop" data-close></div>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-label="커미션 상세">
+        <button class="modal-close" type="button" data-close>닫기</button>
+        <div class="post-detail">
+          <div class="post-title">커미션 샘플</div>
+          <div class="post-meta">2025.11 · commission</div>
+          <div class="post-body">
+            <p>브랜드 아이콘 및 웹 구성 커미션 예시입니다.</p>
+            <p>범위: 아이콘 세트 / 키비주얼 / 레이아웃 가이드</p>
+            <p>진행: 컨셉 → 시안 → 피드백 → 납품</p>
+          </div>
+          <div class="post-gallery">
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-left">© 2026 PORTFOLIO</div>
+      <div class="footer-right">design · dev · story</div><div class="footer-copy">© 2026 yoonna. All rights reserved.</div></footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
