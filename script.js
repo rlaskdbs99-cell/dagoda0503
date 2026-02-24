@@ -213,6 +213,27 @@ function pickClosestForecast(items, category, targetDate, targetTime) {
   return best;
 }
 
+function pickNearestDateForecast(items, category, targetDate) {
+  const candidates = items.filter((item) => item.category === category);
+  if (!candidates.length) return null;
+
+  const exact = candidates.find((item) => item.fcstDate === targetDate);
+  if (exact) return exact;
+
+  let best = candidates[0];
+  let bestGap = Math.abs(Number(best.fcstDate) - Number(targetDate));
+
+  candidates.forEach((item) => {
+    const gap = Math.abs(Number(item.fcstDate) - Number(targetDate));
+    if (gap < bestGap) {
+      best = item;
+      bestGap = gap;
+    }
+  });
+
+  return best;
+}
+
 async function fetchWeather() {
   if (!weatherText || !weatherHigh || !weatherLow) return;
 
@@ -239,8 +260,8 @@ async function fetchWeather() {
       const items = data?.response?.body?.items?.item || [];
       if (!items.length) continue;
 
-      const tmx = pickClosestForecast(items, 'TMX', targetDate);
-      const tmn = pickClosestForecast(items, 'TMN', targetDate);
+      const tmx = pickNearestDateForecast(items, 'TMX', targetDate);
+      const tmn = pickNearestDateForecast(items, 'TMN', targetDate);
       const pty = pickClosestForecast(items, 'PTY', targetDate, targetTime);
       const sky = pickClosestForecast(items, 'SKY', targetDate, targetTime);
       const wsd = pickClosestForecast(items, 'WSD', targetDate, targetTime);
