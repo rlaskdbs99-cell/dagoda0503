@@ -266,29 +266,7 @@ body {
 }
 
 .sns-item::before {
-  content: '';
-  width: 16px;
-  height: 16px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-family: 'IBM Plex Mono', monospace;
-  color: var(--cream);
-  background: var(--green-700);
-}
-
-.sns-item.twitter::before {
-  content: 'T';
-}
-
-.sns-item.instagram::before {
-  content: 'I';
-}
-
-.sns-item.grafolio::before {
-  content: 'G';
+  content: none;
 }
 
 .mail-line {
@@ -884,33 +862,385 @@ body {
 @media (max-width: 980px) {
   .layout {
     grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 16px 4px 8px;
+  }
+
+  .layout.layout--single {
+    grid-template-columns: 1fr;
   }
 
   .topbar {
     grid-template-columns: 1fr;
     justify-items: start;
+    gap: 12px;
     padding: 10px 8px 14px;
   }
 
   .footer {
     flex-direction: column;
     gap: 4px;
+    align-items: flex-start;
   }
 
   .page {
     margin: 16px 12px 32px;
     padding: 20px 16px 12px;
+    border-radius: 18px;
   }
 
   .tabs {
+    width: 100%;
     flex-wrap: wrap;
+    border-radius: 16px;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .tab {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+
+  .panel {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .panel-title {
+    left: 14px;
+    top: -10px;
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  .profile {
+    gap: 10px;
+  }
+
+  .mail-line {
+    font-size: 11px;
+  }
+
+  .weather-box {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .canvas {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .notice-strip,
+  .gallery,
+  .status-board {
+    margin-bottom: 12px;
+  }
+
+  .gallery {
+    padding: 10px;
+  }
+
+  .gallery-cats {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .cat {
+    padding: 6px 9px;
+    font-size: 11px;
+  }
+
+  .status-board {
+    padding: 10px;
+  }
+
+  .timeline {
+    min-height: auto;
+    gap: 10px;
+  }
+
+  .timeline-list {
+    padding: 6px 2px 0;
+    gap: 10px;
+  }
+
+  .timeline-list li {
+    grid-template-columns: 48px 1fr;
+    gap: 8px;
+    padding: 8px 8px;
+  }
+
+  .visit-line {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .gallery-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .post-gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .modal-content {
+    width: min(94vw, 720px);
+    max-height: 88vh;
+    overflow: auto;
+    padding: 18px 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    margin: 10px 8px 20px;
+    padding: 14px 10px 10px;
+    border-radius: 14px;
+  }
+
+  .topbar {
+    padding: 8px 4px 12px;
+    gap: 10px;
+  }
+
+  .logo {
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+  }
+
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    background: rgba(167, 189, 169, 0.28);
+  }
+
+  .tab {
+    width: 100%;
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+
+  .layout {
+    gap: 12px;
+    padding: 12px 0 6px;
+  }
+
+  .layout.layout--single {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .panel {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .profile {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 6px 10px;
+    align-items: start;
+  }
+
+  .layout--single > .profile {
+    display: none;
+  }
+
+  .layout--single > .canvas {
+    padding: 12px;
+    min-height: auto;
+    width: 100%;
+  }
+
+  .layout--single .panel-title {
+    left: 12px;
+  }
+
+  .avatar-frame {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .avatar {
+    width: 88px;
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .profile-meta {
+    grid-column: 2;
+    grid-row: 1;
+    gap: 3px;
+  }
+
+  .profile-meta li {
+    padding: 4px 7px;
+    min-height: 30px;
+    align-items: center;
+  }
+
+  .name-chip {
+    gap: 6px;
+    font-size: 11px;
+  }
+
+  .sns-box {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 6px 7px;
+  }
+
+  .sns-title {
+    display: none;
+  }
+
+  .sns-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .sns-list li {
+    min-width: 0;
+    padding: 4px 5px;
+    font-size: 9px;
+    gap: 4px;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 6px;
+  }
+
+  .mail-line {
+    display: none;
+  }
+
+  .profile-meta,
+  .sns-list,
+  .guest-list,
+  .status-slots {
+    gap: 6px;
+  }
+
+  .notice-item,
+  .guest-item {
+    border-radius: 10px;
+    padding: 9px 10px;
+  }
+
+  .guest-form {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .guest-input,
+  .guest-textarea {
+    font-size: 12px;
+    padding: 8px 9px;
+    border-radius: 8px;
+  }
+
+  .guest-btn {
+    width: 100%;
+    justify-self: stretch;
+    text-align: center;
+  }
+
+  .status-group {
+    margin-bottom: 10px;
+  }
+
+  .slot {
+    padding: 7px 8px;
+    font-size: 11px;
+    border-radius: 8px;
+  }
+
+  .mini-calendar,
+  .sns-box,
+  .mood-box {
+    padding: 9px 10px;
+  }
+
+  .mini-calendar,
+  .mood-box {
+    grid-column: 1 / -1;
+  }
+
+  .cal-grid {
+    gap: 4px 2px;
+    font-size: 10px;
+  }
+
+  .weather-row {
+    justify-content: space-between;
+  }
+
+  .weather-row:first-child {
+    justify-content: flex-start;
+  }
+
+  .canvas {
+    padding: 12px;
+  }
+
+  .gallery-grid,
+  .post-gallery {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .card {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .timeline-list li {
+    grid-template-columns: 42px 1fr;
+    gap: 6px;
+    border-radius: 10px;
+  }
+
+  .timeline-list li::before {
+    margin-left: -10px;
+  }
+
+  .time {
+    font-size: 11px;
+  }
+
+  .event {
+    font-size: 12px;
+  }
+
+  .visit-line {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    font-size: 11px;
+  }
+
+  .footer,
+  .footer-copy {
+    padding-left: 4px;
+    padding-right: 4px;
+    font-size: 10px;
+  }
+
+  .modal-content {
+    width: 95vw;
+    padding: 16px 12px;
+    border-radius: 14px;
+  }
+
+  .modal-close {
+    top: 8px;
+    right: 8px;
+    padding: 5px 8px;
   }
 }
