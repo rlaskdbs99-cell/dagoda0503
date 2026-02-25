@@ -15,6 +15,7 @@ const guestMsg = document.querySelector('#guest-msg');
 const guestList = document.querySelector('.guest-list');
 const guestBtn = document.querySelector('.guest-btn');
 const storageKey = 'guestbookEntries';
+const guestbookEndpoint = '/guestbook';
 
 function formatDate(date) {
   const y = date.getFullYear();
@@ -54,6 +55,59 @@ function saveEntries(entries) {
   localStorage.setItem(storageKey, JSON.stringify(entries));
 }
 
+function normalizeEntries(entries) {
+  if (!Array.isArray(entries)) return [];
+  return entries
+    .filter((entry) => entry && typeof entry.message === 'string')
+    .map((entry) => ({
+      name: String(entry.name || 'guest').slice(0, 24),
+      message: String(entry.message || '').slice(0, 500),
+      date: String(entry.date || formatDate(new Date()))
+    }));
+}
+
+async function fetchGuestbookEntries() {
+  if (!guestList) return [];
+  try {
+    const res = await fetch(guestbookEndpoint, { method: 'GET' });
+    if (!res.ok) throw new Error('guestbook fetch failed');
+    const data = await res.json();
+    const entries = normalizeEntries(data.entries || data);
+    if (entries.length) {
+      saveEntries(entries);
+    }
+    return entries;
+  } catch {
+    return normalizeEntries(getEntries());
+  }
+}
+
+async function submitGuestbookEntry(name, message) {
+  try {
+    const res = await fetch(guestbookEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, message })
+    });
+    if (!res.ok) throw new Error('guestbook submit failed');
+    const data = await res.json();
+    const entries = normalizeEntries(data.entries || data);
+    if (entries.length) {
+      saveEntries(entries);
+    }
+    return entries;
+  } catch {
+    const entries = normalizeEntries(getEntries());
+    entries.unshift({
+      name,
+      message,
+      date: formatDate(new Date())
+    });
+    saveEntries(entries);
+    return entries;
+  }
+}
+
 function renderEntries(entries) {
   if (!guestList) return;
   guestList.innerHTML = '';
@@ -84,27 +138,20 @@ function renderEntries(entries) {
   });
 }
 
-function handleSubmit() {
+async function handleSubmit() {
   if (!guestName || !guestMsg) return;
   const name = guestName.value.trim() || 'guest';
   const message = guestMsg.value.trim();
   if (!message) return;
 
-  const entries = getEntries();
-  entries.unshift({
-    name,
-    message,
-    date: formatDate(new Date())
-  });
-  saveEntries(entries);
+  const entries = await submitGuestbookEntry(name, message);
   renderEntries(entries);
   guestName.value = '';
   guestMsg.value = '';
 }
 
 if (guestForm) {
-  const entries = getEntries();
-  renderEntries(entries);
+  fetchGuestbookEntries().then(renderEntries);
 
   guestForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -124,6 +171,7 @@ const visitTotalTargets = document.querySelectorAll('[data-visit-total]');
 
 const calendars = document.querySelectorAll('.mini-calendar');
 const galleryTabs = document.querySelectorAll('[data-gallery-tabs]');
+const CONTENT_STORAGE_KEY = 'portfolioContent';
 
 const WEATHER_CONFIG = {
   NX: 60,
@@ -372,6 +420,179 @@ function renderCalendar() {
 
 renderCalendar();
 
+function readLocalContent() {
+  const raw = localStorage.getItem(CONTENT_STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+async function fetchContentFile() {
+  try {
+    const res = await fetch('data/content.json');
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+function buildThumbStyle(path) {
+  if (!path) return '';
+  return `background-image: url('${path.replace(/'/g, '%27')}');`;
+}
+
+function buildMetaLine(item) {
+  const parts = [];
+  if (item.meta) parts.push(item.meta);
+  if (item.created) parts.push(`제작 ${item.created}`);
+  if (item.updated) parts.push(`최종 수정 ${item.updated}`);
+  return parts.join(' · ');
+}
+
+function renderHomeGallery(items) {
+  const grid = document.querySelector('[data-gallery-grid]');
+  if (!grid) return;
+  grid.innerHTML = items
+    .map((item) => {
+      const style = buildThumbStyle(item.thumb);
+      const styleAttr = style ? ` style="${style}"` : '';
+      return `
+        <button class="card card-button" type="button" data-category="${item.category}" data-detail="${item.id}">
+          <div class="thumb"${styleAttr}></div>
+          <div class="card-title">${item.title}</div>
+        </button>
+      `;
+    })
+    .join('');
+}
+
+function renderGallerySections(items) {
+  const sections = document.querySelectorAll('[data-gallery-section]');
+  if (!sections.length) return;
+
+  sections.forEach((section) => {
+    const category = section.getAttribute('data-gallery-section');
+    const grid = section.querySelector('[data-gallery-grid]');
+    if (!grid || !category) return;
+    const filtered = items.filter((item) => item.category === category);
+    grid.innerHTML = filtered
+      .map((item) => {
+        const style = buildThumbStyle(item.thumb);
+        const styleAttr = style ? ` style="${style}"` : '';
+        return `
+          <button class="card card-button" type="button" data-detail="${item.id}">
+            <div class="thumb"${styleAttr}></div>
+            <div class="card-title">${item.title}</div>
+          </button>
+        `;
+      })
+      .join('');
+  });
+}
+
+function renderTimeline(items) {
+  const list = document.querySelector('.timeline-list');
+  if (!list) return;
+  list.innerHTML = items
+    .map(
+      (entry) => `
+        <li>
+          <span class="time">${entry.date}</span>
+          <span class="event">${entry.event}</span>
+        </li>
+      `
+    )
+    .join('');
+}
+
+function renderFriends(items) {
+  const list = document.querySelector('.friend-list');
+  if (!list) return;
+  list.innerHTML = items
+    .map((friend) => {
+      const style = buildThumbStyle(friend.banner);
+      const styleAttr = style ? ` style="${style}"` : '';
+      const extraClass = friend.banner ? ' friend-item--image' : '';
+      const url = friend.url || '#';
+      return `<a class="friend-item${extraClass}" href="${url}" target="_blank" rel="noopener"${styleAttr}>${friend.name}</a>`;
+    })
+    .join('');
+}
+
+function renderModals(items) {
+  document.querySelectorAll('.modal').forEach((modal) => modal.remove());
+  const fragment = document.createDocumentFragment();
+
+  items.forEach((item) => {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = item.id;
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('data-dynamic', 'true');
+
+    const metaLine = buildMetaLine(item);
+    const body = (item.description || []).map((line) => `<p>${line}</p>`).join('');
+    const galleryImages = item.images?.length ? item.images : item.thumb ? [item.thumb] : [];
+    const slides = [];
+    for (let i = 0; i < galleryImages.length; i += 3) {
+      const chunk = galleryImages.slice(i, i + 3);
+      const thumbs = chunk
+        .map(
+          (img) =>
+            `<button type="button" class="thumb thumb-button" data-full="${img.replace(/"/g, '&quot;')}" style="${buildThumbStyle(img)}"></button>`
+        )
+        .join('');
+      slides.push(`<div class="modal-slide">${thumbs}</div>`);
+    }
+    const hasControls = slides.length > 1;
+    const slider = `
+      <div class="modal-slider" data-slider>
+        <div class="modal-track" data-track>${slides.join('')}</div>
+        ${hasControls ? '<button type="button" class="slider-btn prev" data-slide="prev" aria-label="이전">&lt;</button>' : ''}
+        ${hasControls ? '<button type="button" class="slider-btn next" data-slide="next" aria-label="다음">&gt;</button>' : ''}
+      </div>
+    `;
+    const linkMarkup = item.link
+      ? `<a class="post-link" href="${item.link}" target="_blank" rel="noopener">사이트 열기</a>`
+      : '';
+
+    modal.innerHTML = `
+      <div class="modal-backdrop" data-close></div>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-label="${item.title} 상세">
+        <button class="modal-close" type="button" data-close aria-label="닫기">×</button>
+        <div class="post-detail">
+          <div class="post-title">${item.title}</div>
+          <div class="post-meta">${metaLine}</div>
+          <div class="post-body">${body}</div>
+          ${linkMarkup}
+          ${slider}
+        </div>
+      </div>
+    `;
+
+    fragment.appendChild(modal);
+  });
+
+  document.body.appendChild(fragment);
+}
+
+async function loadContentAndRender() {
+  const localData = readLocalContent();
+  const data = localData || (await fetchContentFile());
+  if (!data) return;
+  const items = Array.isArray(data.gallery) ? data.gallery : [];
+  renderHomeGallery(items);
+  renderGallerySections(items);
+  renderModals(items);
+  if (Array.isArray(data.timeline)) renderTimeline(data.timeline);
+  if (Array.isArray(data.friends)) renderFriends(data.friends);
+  setupGalleryTabs();
+}
+
 function setupGalleryTabs() {
   if (!galleryTabs.length) return;
 
@@ -383,6 +604,8 @@ function setupGalleryTabs() {
     if (!buttons.length || !cards.length) return;
 
     buttons.forEach((btn) => {
+      if (btn.dataset.tabBound) return;
+      btn.dataset.tabBound = 'true';
       btn.addEventListener('click', () => {
         const target = btn.getAttribute('data-cat');
         buttons.forEach((b) => b.classList.remove('is-active'));
@@ -400,39 +623,127 @@ function setupGalleryTabs() {
   });
 }
 
-setupGalleryTabs();
-
-const modalButtons = document.querySelectorAll('[data-detail]');
-const modals = document.querySelectorAll('.modal');
-
 function closeModals() {
-  modals.forEach((modal) => {
+  document.querySelectorAll('.modal').forEach((modal) => {
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
   });
 }
 
-modalButtons.forEach((btn) => {
-  btn.addEventListener('click', () => {
-    const id = btn.getAttribute('data-detail');
-    const modal = document.getElementById(id);
-    if (!modal) return;
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-  });
-});
+document.addEventListener('click', (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
 
-modals.forEach((modal) => {
-  modal.addEventListener('click', (event) => {
-    const target = event.target;
-    if (target instanceof HTMLElement && target.closest('[data-close]')) {
-      closeModals();
+  const openBtn = target.closest('[data-detail]');
+  if (openBtn) {
+    const id = openBtn.getAttribute('data-detail');
+    const modal = id ? document.getElementById(id) : null;
+    if (modal) {
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
     }
-  });
+  }
+
+  if (target.closest('[data-close]')) {
+    closeModals();
+  }
+
+  const slideBtn = target.closest('[data-slide]');
+  if (slideBtn) {
+    const slider = slideBtn.closest('[data-slider]');
+    if (!slider) return;
+    const track = slider.querySelector('[data-track]');
+    if (!track) return;
+    const slides = track.children.length || 1;
+    const current = Number(slider.getAttribute('data-index') || '0');
+    const dir = slideBtn.getAttribute('data-slide');
+    const nextIndex = dir === 'next' ? (current + 1) % slides : (current - 1 + slides) % slides;
+    slider.setAttribute('data-index', String(nextIndex));
+    track.style.transform = `translateX(${-100 * nextIndex}%)`;
+  }
+
+  const thumbBtn = target.closest('.thumb-button');
+  if (thumbBtn) {
+    const full = thumbBtn.getAttribute('data-full');
+    if (!full) return;
+    const siblings = [...(thumbBtn.closest('.modal-slider')?.querySelectorAll('.thumb-button') || [])];
+    const list = siblings.map((btn) => btn.getAttribute('data-full')).filter(Boolean);
+    const index = Math.max(0, list.indexOf(full));
+    openLightbox(full, list, index);
+  }
 });
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closeModals();
+    closeLightbox();
   }
 });
+
+loadContentAndRender();
+
+const lightbox = document.createElement('div');
+lightbox.className = 'lightbox';
+lightbox.setAttribute('aria-hidden', 'true');
+lightbox.innerHTML = `
+  <div class="lightbox-backdrop" data-lightbox-close></div>
+  <div class="lightbox-content">
+    <div class="lightbox-slider" data-lightbox-slider>
+      <div class="lightbox-track" data-lightbox-track></div>
+    </div>
+    <button type="button" class="lightbox-nav prev" data-lightbox-slide="prev" aria-label="이전">&lt;</button>
+    <button type="button" class="lightbox-nav next" data-lightbox-slide="next" aria-label="다음">&gt;</button>
+    <button type="button" class="lightbox-close" data-lightbox-close aria-label="닫기">×</button>
+  </div>
+`;
+document.body.appendChild(lightbox);
+
+function openLightbox(src, list = [], index = 0) {
+  const track = lightbox.querySelector('[data-lightbox-track]');
+  if (!track) return;
+  const items = list.length ? list : [src];
+  track.innerHTML = items
+    .map((item) => `<div class="lightbox-slide"><img src="${item}" alt="미리보기" /></div>`)
+    .join('');
+  lightbox.dataset.list = JSON.stringify(items);
+  lightbox.dataset.index = String(index);
+  track.style.transform = `translateX(${-100 * index}%)`;
+  toggleLightboxNav(items.length > 1);
+  lightbox.classList.add('is-open');
+  lightbox.setAttribute('aria-hidden', 'false');
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('is-open');
+  lightbox.setAttribute('aria-hidden', 'true');
+}
+
+lightbox.addEventListener('click', (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+  if (target.closest('[data-lightbox-close]')) {
+    closeLightbox();
+  }
+  const nav = target.closest('[data-lightbox-slide]');
+  if (nav) {
+    const dir = nav.getAttribute('data-lightbox-slide');
+    moveLightbox(dir === 'next' ? 1 : -1);
+  }
+});
+
+function toggleLightboxNav(show) {
+  lightbox.querySelectorAll('.lightbox-nav').forEach((btn) => {
+    btn.style.display = show ? 'inline-flex' : 'none';
+  });
+}
+
+function moveLightbox(delta) {
+  const list = JSON.parse(lightbox.dataset.list || '[]');
+  if (!list.length) return;
+  const current = Number(lightbox.dataset.index || '0');
+  const nextIndex = (current + delta + list.length) % list.length;
+  const track = lightbox.querySelector('[data-lightbox-track]');
+  if (!track) return;
+  track.style.transform = `translateX(${-100 * nextIndex}%)`;
+  lightbox.dataset.index = String(nextIndex);
+}

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio Admin</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <div class="admin-page">
+      <header class="admin-header">
+        <div>
+          <div class="admin-eyebrow">local only</div>
+          <h1>Portfolio Admin</h1>
+          <p class="admin-sub">로컬에서만 사용되는 간단 편집기입니다. 저장은 브라우저 `localStorage`에 기록돼요.</p>
+        </div>
+        <div class="admin-actions">
+          <a class="admin-link" href="index.html">홈으로</a>
+          <a class="admin-link" href="gallery.html">갤러리</a>
+        </div>
+      </header>
+
+      <section class="admin-panel">
+        <div class="panel-title">data controls</div>
+        <div class="panel-actions">
+          <button type="button" data-action="save">로컬에 저장</button>
+          <button type="button" data-action="export">JSON 내보내기</button>
+          <button type="button" data-action="reset" class="ghost">로컬 초기화</button>
+        </div>
+        <div class="status-line" data-status>대기 중</div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-title">thumbnail generator</div>
+        <div class="thumb-grid">
+          <label>
+            대상 폴더
+            <input type="text" value="gallery" data-thumb-field="inputDir" />
+          </label>
+          <label>
+            가로(px)
+            <input type="number" value="700" data-thumb-field="width" />
+          </label>
+          <label>
+            품질(quality)
+            <input type="number" value="88" data-thumb-field="quality" />
+          </label>
+          <label>
+            포맷
+            <select data-thumb-field="format">
+              <option value="webp" selected>webp</option>
+              <option value="jpg">jpg</option>
+              <option value="png">png</option>
+            </select>
+          </label>
+          <label>
+            파일명
+            <input type="text" value="thums" data-thumb-field="name" />
+          </label>
+          <label>
+            원본 선택
+            <select data-thumb-field="pick">
+              <option value="first" selected>first</option>
+              <option value="largest">largest</option>
+            </select>
+          </label>
+          <label class="check">
+            <input type="checkbox" checked data-thumb-field="recursive" />
+            하위 폴더까지
+          </label>
+          <label class="check">
+            <input type="checkbox" data-thumb-field="overwrite" />
+            기존 덮어쓰기
+          </label>
+        </div>
+        <div class="panel-actions">
+          <button type="button" data-action="run-thumbs">썸네일 생성</button>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <div class="section-title">갤러리</div>
+        <div class="section-actions">
+          <button type="button" data-action="add-gallery">추가</button>
+        </div>
+        <div class="admin-list" data-gallery-list></div>
+      </section>
+
+      <section class="admin-section">
+        <div class="section-title">타임라인</div>
+        <div class="section-actions">
+          <button type="button" data-action="add-timeline">추가</button>
+        </div>
+        <div class="admin-list" data-timeline-list></div>
+      </section>
+
+      <section class="admin-section">
+        <div class="section-title">친구 배너</div>
+        <div class="section-actions">
+          <button type="button" data-action="add-friend">추가</button>
+        </div>
+        <div class="admin-list" data-friend-list></div>
+      </section>
+    </div>
+
+    <script src="admin.js"></script>
+  </body>
+</html>

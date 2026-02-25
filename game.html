@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>미니게임</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+  <div class="bg-noise" aria-hidden="true"></div>
+  <div class="page">
+    <header class="topbar">
+      <div class="logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">PORTFOLIO</span>
+      </div>
+      <nav class="tabs" aria-label="메인 탭">
+        <a class="tab" href="index.html">home</a>
+        <a class="tab" href="notice.html">notice</a>
+        <a class="tab" href="gallery.html">gallery</a>
+        <a class="tab" href="work.html">work</a>
+        <a class="tab is-active" href="game.html">game</a>
+        <a class="tab" href="guest.html">guest</a>
+      </nav>
+      <div class="status status--hidden">
+        <span data-visit-today>today --</span> / <span data-visit-total>total --</span>
+      </div>
+    </header>
+
+    <main class="layout layout--single">
+      <section class="panel profile" aria-label="프로필">
+        <div class="panel-title">profile</div>
+        <div class="avatar-frame">
+          <div class="avatar"></div>
+        </div>
+        <ul class="profile-meta">
+          <li>
+            <span class="name-chip">dago 다고</span>
+          </li>
+        </ul>
+        <div class="sns-box">
+          <div class="sns-title">sns</div>
+          <ul class="sns-list">
+            <li class="sns-item twitter">Twitter</li>
+            <li class="sns-item instagram"><a href="https://www.instagram.com/dagoda_99/" target="_blank" rel="noopener">Instagram</a></li>
+            <li class="sns-item grafolio"><a href="https://grafolio.ogq.me/profile/다고다/profile" target="_blank" rel="noopener">Grafolio</a></li>
+          </ul>
+          <div class="mail-line">MAIL : dagoda0503@gmail.com</div>
+        </div>
+        <div class="mood-box">
+          <div class="mood-label">weather</div>
+          <div class="weather-box">
+            <div class="weather-row">
+              <span class="weather-icon" aria-hidden="true"></span>
+              <span class="weather-text">불러오는 중</span>
+            </div>
+            <div class="weather-row">
+              <span class="weather-label">최고</span>
+              <span class="weather-high">--°</span>
+            </div>
+            <div class="weather-row">
+              <span class="weather-label">최저</span>
+              <span class="weather-low">--°</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel canvas game-panel" aria-label="미니게임" data-game>
+        <div class="panel-title">game</div>
+
+        <!-- Header -->
+        <div class="game-head">
+          <div>
+            <div class="game-title">ICON DROP</div>
+            <div class="game-sub">아이콘을 빠르게 클릭해서 점수를 올려보세요.</div>
+          </div>
+          <div class="game-controls">
+            <button class="btn btn--primary" type="button" data-btn="start">start</button>
+            <button class="btn btn--ghost" type="button" data-btn="reset">reset</button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+          <div class="stat-box stat-box--time">
+            <div class="stat-top">
+              <span class="stat-label">TIME</span>
+              <span class="stat-value" data-stat="time">30s</span>
+            </div>
+            <div class="timer-track"><div class="timer-fill" data-timer-fill></div></div>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">SCORE</span>
+            <span class="stat-value" data-stat="score">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">BEST</span>
+            <span class="stat-value" data-stat="best">0</span>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="status-line" data-status>start 버튼을 눌러 게임을 시작하세요.</div>
+
+        <!-- Stage -->
+        <div class="stage" data-stage>
+          <!-- READY -->
+          <div class="overlay ov-ready is-active" data-ov="ready">
+            <div class="ov-ready-icons">
+              <div class="ov-ready-icon-wrap"><img src="gallery/아이콘/1/1.png" alt="" /></div>
+              <div class="ov-ready-icon-wrap"><img src="gallery/아이콘/1/2.png" alt="" /></div>
+              <div class="ov-ready-icon-wrap"><img src="gallery/아이콘/1/3.png" alt="" /></div>
+              <div class="ov-ready-icon-wrap"><img src="gallery/아이콘/1/5.png" alt="" /></div>
+            </div>
+            <div class="ov-ready-title">ICON DROP</div>
+            <div class="ov-ready-line"></div>
+            <div class="ov-ready-desc">30초 동안 아이콘을 최대한 많이 클릭해보세요.</div>
+            <button class="ov-ready-prompt" type="button" data-btn="ready-start">&#9654; PRESS START</button>
+            <div class="ov-ready-hiscore">HI-SCORE <span data-hiscore>0000</span></div>
+          </div>
+
+          <!-- GAME OVER -->
+          <div class="overlay ov-over" data-ov="over">
+            <div class="ov-over-deco"><img src="gallery/아이콘/1/1.png" alt="" /></div>
+            <div class="ov-over-deco"><img src="gallery/아이콘/1/2.png" alt="" /></div>
+            <div class="ov-over-deco"><img src="gallery/아이콘/1/3.png" alt="" /></div>
+            <div class="ov-over-deco"><img src="gallery/아이콘/1/5.png" alt="" /></div>
+
+            <div class="ov-over-title">GAME OVER</div>
+            <div class="ov-over-sub">time is up!</div>
+
+            <div class="score-card">
+              <div class="sc-row">
+                <span class="sc-label">SCORE</span>
+                <span class="sc-value"><span data-over-score>0</span><span class="new-badge" data-new-badge style="display:none">NEW!</span></span>
+              </div>
+              <div class="sc-row">
+                <span class="sc-label">BEST</span>
+                <span class="sc-value sc-value--dim" data-over-best>0</span>
+              </div>
+              <div class="sc-rank">
+                <div class="rank-circle rank-circle--d" data-over-rank>D</div>
+                <div class="rank-info">
+                  <strong data-over-rank-label>TRY AGAIN</strong><br />
+                  <span data-over-rank-desc>다시 도전해보세요!</span>
+                </div>
+              </div>
+              <div class="sc-stats">
+                <span class="sc-stat">HIT <span data-over-hit>0</span></span>
+                <span class="sc-stat">MISS <span data-over-miss>0</span></span>
+                <span class="sc-stat">ACC <span data-over-acc>0%</span></span>
+              </div>
+            </div>
+
+            <div class="ov-over-actions">
+              <button class="btn btn--primary" type="button" data-btn="retry">retry</button>
+              <button class="btn btn--ghost" type="button" data-btn="exit">exit</button>
+            </div>
+          </div>
+
+          <!-- Combo indicator -->
+          <div class="combo-tag" data-combo style="visibility:hidden">x0</div>
+
+          <!-- Miss line -->
+          <div class="miss-line" data-miss-line></div>
+          <div class="miss-line-label" data-miss-label>MISS</div>
+        </div>
+
+        <!-- Rules -->
+        <div class="rules">
+          <div class="rules-title">rules</div>
+          <ul class="rules-list">
+            <li>아이콘을 클릭하면 점수 +10</li>
+            <li>바닥에 닿으면 점수 -5</li>
+            <li>3연속 이상 클릭하면 콤보 보너스!</li>
+            <li>30초 동안 최고 점수를 노려보세요</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-left">&copy; 2026 PORTFOLIO</div>
+      <div class="footer-right">design &middot; dev &middot; story</div>
+    </footer>
+    <div class="footer-copy">&copy; 2026 dago. All rights reserved.</div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

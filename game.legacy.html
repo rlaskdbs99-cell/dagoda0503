@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>공지사항</title>
+  <title>미니게임</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="game.css" />
 </head>
 <body>
   <div class="bg-noise" aria-hidden="true"></div>
@@ -16,13 +17,15 @@
       </div>
       <nav class="tabs" aria-label="메인 탭">
         <a class="tab" href="index.html">home</a>
-        <a class="tab is-active" href="notice.html">notice</a>
+        <a class="tab" href="notice.html">notice</a>
         <a class="tab" href="gallery.html">gallery</a>
         <a class="tab" href="work.html">work</a>
-        <a class="tab" href="game.html">game</a>
+        <a class="tab is-active" href="game.html">game</a>
         <a class="tab" href="guest.html">guest</a>
       </nav>
-      <div class="status status--hidden">today 021 / total 10,248</div>
+      <div class="status status--hidden">
+        <span data-visit-today>today --</span> / <span data-visit-total>total --</span>
+      </div>
     </header>
 
     <main class="layout layout--single">
@@ -45,16 +48,6 @@
           </ul>
           <div class="mail-line">MAIL : dagoda0503@gmail.com</div>
         </div>
-        <div class="mini-calendar" aria-label="달력">
-          <div class="cal-header">2026.02</div>
-          <div class="cal-grid">
-            <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
-            <span class="muted">1</span><span class="muted">2</span><span class="muted">3</span><span class="muted">4</span><span class="muted">5</span><span class="muted">6</span><span class="muted">7</span>
-            <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
-            <span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
-            <span>22</span><span>23</span><span class="is-today">24</span><span>25</span><span>26</span><span>27</span><span>28</span>
-          </div>
-        </div>
         <div class="mood-box">
           <div class="mood-label">weather</div>
           <div class="weather-box">
@@ -71,41 +64,59 @@
               <span class="weather-low">--°</span>
             </div>
           </div>
-        </div></section>
-
-      <section class="panel canvas" aria-label="공지사항">
-        <div class="panel-title">notice</div>
-        <div class="notice-strip">
-          <div class="notice-head">
-            <span class="notice-chip">notice</span>
-          </div>
-          <span class="notice-text">현재 홈페이지 공사 중입니다. 조금만 기다려주세요.</span>
         </div>
-        <div class="notice-list">
-          <div class="notice-item">
-            <div class="notice-body">방명록도 자유롭게 남겨주세요.</div>
+      </section>
+
+      <section class="panel canvas game-panel" aria-label="미니게임">
+        <div class="panel-title">game</div>
+        <div class="game-header">
+          <div>
+            <div class="game-title">ICON DROP</div>
+            <div class="game-sub">아이콘을 빠르게 클릭해서 점수를 올려보세요.</div>
           </div>
+          <div class="game-controls">
+            <button class="game-btn" type="button" data-game-start>start</button>
+            <button class="game-btn ghost" type="button" data-game-reset>reset</button>
+          </div>
+        </div>
+
+        <div class="game-stats">
+          <div class="stat">time <span data-game-time>30</span>s</div>
+          <div class="stat">score <span data-game-score>0</span></div>
+          <div class="stat">best <span data-game-best>0</span></div>
+        </div>
+
+        <div class="game-status" data-game-status aria-live="polite">
+          start 버튼을 눌러 게임을 시작하세요.
+        </div>
+
+        <div class="game-stage" data-game-stage aria-label="게임 플레이 영역">
+          <div class="game-overlay" data-game-overlay>
+            <div class="game-overlay__title">READY?</div>
+            <div class="game-overlay__desc">30초 동안 아이콘을 최대한 많이 클릭해보세요.</div>
+          </div>
+        </div>
+
+        <div class="game-help">
+          <div class="help-title">rules</div>
+          <ul class="help-list">
+            <li>아이콘을 클릭하면 점수 +10</li>
+            <li>바닥에 닿으면 점수 -5</li>
+            <li>30초 동안 최고 점수를 노려줘</li>
+          </ul>
         </div>
       </section>
     </main>
 
     <footer class="footer">
       <div class="footer-left">© 2026 PORTFOLIO</div>
-      <div class="footer-right">design · dev · story</div><div class="footer-copy">© 2026 dago. All rights reserved.</div></footer>
+      <div class="footer-right">design · dev · story</div>
+    </footer>
+    <div class="footer-copy">© 2026 dago. All rights reserved.</div>
   </div>
+
   <script src="script.js"></script>
+  <script src="game.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
 

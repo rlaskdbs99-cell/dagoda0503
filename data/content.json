@@ -1,0 +1,146 @@
+{
+  "gallery": [
+    {
+      "id": "home-web-1",
+      "category": "홈페이지",
+      "title": "포트폴리오 홈페이지",
+      "thumb": "gallery/홈페이지/1/thum1.png",
+      "meta": "2026.02 · website",
+      "created": "2026.02.01",
+      "updated": "2026.02.23",
+      "link": "https://onjang.pages.dev/",
+      "description": [
+        "미니홈피 감성을 기반으로 구성한 메인 포트폴리오입니다.",
+        "톤: 저채도 그린 · 타자기 타입 · 종이 질감",
+        "구성: 프로필 / 갤러리 / 워크데스크 / 타임라인"
+      ],
+      "images": [
+        "gallery/홈페이지/1/thum1.png",
+        "gallery/홈페이지/1/기본 화면.png",
+        "gallery/홈페이지/1/배경.jpg",
+        "gallery/홈페이지/1/스티커 인쇄.jpg"
+      ]
+    },
+    {
+      "id": "home-icon-1",
+      "category": "아이콘",
+      "title": "아이콘 작업",
+      "thumb": "gallery/아이콘/1/thums.png",
+      "meta": "2026.02 · icon series",
+      "created": "",
+      "updated": "",
+      "link": "",
+      "description": [
+        "아이콘 작업의 기획, 스타일 가이드, 제작 과정, 마감 규칙을 정리한 페이지입니다.",
+        "톤: 둥근 모서리 · 저채도 그린 · 미니멀 라인",
+        "크기: 24px / 32px / 48px"
+      ],
+      "images": [
+        "gallery/아이콘/1/thums.png",
+        "gallery/아이콘/1/1.png",
+        "gallery/아이콘/1/2.png",
+        "gallery/아이콘/1/3.png",
+        "gallery/아이콘/1/5.png"
+      ]
+    },
+    {
+      "id": "home-personal-1",
+      "category": "개인작",
+      "title": "개인작 샘플 1",
+      "thumb": "gallery/개인작/1/thums.jpg",
+      "meta": "2025.12 · personal",
+      "created": "",
+      "updated": "",
+      "link": "",
+      "description": [
+        "아이디어 스케치와 실험을 모은 개인 프로젝트입니다.",
+        "키워드: 실험 / 기록 / 타이포",
+        "제작 도구: Figma · Illustrator"
+      ],
+      "images": [
+        "gallery/개인작/1/thums.jpg",
+        "gallery/개인작/1/21.jpg"
+      ]
+    },
+    {
+      "id": "home-personal-2",
+      "category": "개인작",
+      "title": "개인작 샘플 2",
+      "thumb": "gallery/개인작/2/thums.jpg",
+      "meta": "2025.12 · personal",
+      "created": "",
+      "updated": "",
+      "link": "",
+      "description": [
+        "아이디어 스케치와 실험을 모은 개인 프로젝트입니다.",
+        "키워드: 실험 / 기록 / 타이포",
+        "제작 도구: Figma · Illustrator"
+      ],
+      "images": [
+        "gallery/개인작/2/thums.jpg",
+        "gallery/개인작/2/33.jpg"
+      ]
+    },
+    {
+      "id": "home-commission-1",
+      "category": "커미션",
+      "title": "커미션 샘플 1",
+      "thumb": "gallery/커미션/1/thums.jpg",
+      "meta": "2026.01 · commission",
+      "created": "",
+      "updated": "",
+      "link": "",
+      "description": [
+        "커미션 샘플을 모아둔 섹션입니다.",
+        "톤: 포근한 컬러와 강조된 포인트",
+        "범위: 로고, 배너, 상세 페이지"
+      ],
+      "images": [
+        "gallery/커미션/1/thums.jpg",
+        "gallery/커미션/1/cg.jpg"
+      ]
+    },
+    {
+      "id": "home-commission-2",
+      "category": "커미션",
+      "title": "커미션 샘플 2",
+      "thumb": "gallery/커미션/2/thums.jpg",
+      "meta": "2026.01 · commission",
+      "created": "",
+      "updated": "",
+      "link": "",
+      "description": [
+        "커미션 샘플을 모아둔 섹션입니다.",
+        "톤: 포근한 컬러와 강조된 포인트",
+        "범위: 로고, 배너, 상세 페이지"
+      ],
+      "images": [
+        "gallery/커미션/2/thums.jpg",
+        "gallery/커미션/2/ㅆㅁ.jpg"
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "date": "02.24",
+      "event": "포트폴리오 홈 정리 시작"
+    }
+  ],
+  "friends": [
+    {
+      "name": "모모",
+      "url": "#",
+      "banner": ""
+    },
+    {
+      "name": "유진",
+      "url": "#",
+      "banner": ""
+    },
+    {
+      "name": "하나",
+      "url": "#",
+      "banner": ""
+    }
+  ]
+}
