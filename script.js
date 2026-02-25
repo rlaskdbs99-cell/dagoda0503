@@ -16,6 +16,9 @@ const guestList = document.querySelector('.guest-list');
 const guestBtn = document.querySelector('.guest-btn');
 const storageKey = 'guestbookEntries';
 const guestbookEndpoint = '/guestbook';
+const workBoards = document.querySelectorAll('[data-work-board]');
+const workNoticeTargets = document.querySelectorAll('[data-work-notice]');
+const WORK_DEFAULTS = { activeSlots: 3, reservedSlots: 5, emptyLabel: '비어 있음' };
 
 function formatDate(date) {
   const y = date.getFullYear();
@@ -523,6 +526,49 @@ function renderFriends(items) {
     .join('');
 }
 
+function normalizeWorkList(list) {
+  if (!Array.isArray(list)) return [];
+  return list.map((item) => String(item || '').trim()).filter(Boolean);
+}
+
+function buildWorkSlots(list, count) {
+  const items = list.slice(0, count);
+  while (items.length < count) {
+    items.push('');
+  }
+  return items;
+}
+
+function renderWorkSlots(target, list, count) {
+  if (!target) return;
+  const items = buildWorkSlots(list, count);
+  target.innerHTML = items
+    .map((item) => {
+      const isFilled = Boolean(item);
+      const label = item || WORK_DEFAULTS.emptyLabel;
+      const cls = isFilled ? 'slot is-filled' : 'slot';
+      return `<li class="${cls}">${label}</li>`;
+    })
+    .join('');
+}
+
+function renderWork(work) {
+  if (!work) return;
+  const active = normalizeWorkList(work.active);
+  const reserved = normalizeWorkList(work.reserved);
+
+  workNoticeTargets.forEach((el) => {
+    if (work.notice) el.textContent = work.notice;
+  });
+
+  workBoards.forEach((board) => {
+    const activeTarget = board.querySelector('[data-work-active]');
+    const reservedTarget = board.querySelector('[data-work-reserved]');
+    renderWorkSlots(activeTarget, active, WORK_DEFAULTS.activeSlots);
+    renderWorkSlots(reservedTarget, reserved, WORK_DEFAULTS.reservedSlots);
+  });
+}
+
 function renderModals(items) {
   document.querySelectorAll('.modal').forEach((modal) => modal.remove());
   const fragment = document.createDocumentFragment();
@@ -582,14 +628,23 @@ function renderModals(items) {
 
 async function loadContentAndRender() {
   const localData = readLocalContent();
-  const data = localData || (await fetchContentFile());
-  if (!data) return;
-  const items = Array.isArray(data.gallery) ? data.gallery : [];
-  renderHomeGallery(items);
-  renderGallerySections(items);
-  renderModals(items);
-  if (Array.isArray(data.timeline)) renderTimeline(data.timeline);
-  if (Array.isArray(data.friends)) renderFriends(data.friends);
+  const fileData = await fetchContentFile();
+  const data = localData || fileData;
+  if (!data && !fileData) return;
+
+  const merged = {
+    gallery: Array.isArray(data?.gallery) && data.gallery.length ? data.gallery : fileData?.gallery || [],
+    timeline: Array.isArray(data?.timeline) && data.timeline.length ? data.timeline : fileData?.timeline || [],
+    friends: Array.isArray(data?.friends) && data.friends.length ? data.friends : fileData?.friends || [],
+    work: data?.work || fileData?.work || null
+  };
+
+  renderHomeGallery(merged.gallery);
+  renderGallerySections(merged.gallery);
+  renderModals(merged.gallery);
+  if (Array.isArray(merged.timeline)) renderTimeline(merged.timeline);
+  if (Array.isArray(merged.friends)) renderFriends(merged.friends);
+  renderWork(merged.work);
   setupGalleryTabs();
 }
 

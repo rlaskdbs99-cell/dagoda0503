@@ -4,6 +4,11 @@ const galleryList = document.querySelector('[data-gallery-list]');
 const timelineList = document.querySelector('[data-timeline-list]');
 const friendList = document.querySelector('[data-friend-list]');
 const statusLine = document.querySelector('[data-status]');
+const workFields = {
+  notice: document.querySelector('[data-work-field="notice"]'),
+  active: document.querySelector('[data-work-field="active"]'),
+  reserved: document.querySelector('[data-work-field="reserved"]')
+};
 
 const actions = {
   save: document.querySelector('[data-action="save"]'),
@@ -30,11 +35,13 @@ const defaultGalleryItem = {
 
 const defaultTimelineItem = { date: '', event: '' };
 const defaultFriendItem = { name: '', url: '', banner: '' };
+const defaultWork = { notice: '', active: [], reserved: [] };
 
 let content = {
   gallery: [],
   timeline: [],
-  friends: []
+  friends: [],
+  work: { ...defaultWork }
 };
 
 function setStatus(text) {
@@ -55,6 +62,7 @@ async function loadContent() {
   const local = readLocal();
   if (local) {
     content = local;
+    if (!content.work) content.work = { ...defaultWork };
     setStatus('로컬 데이터 로드됨');
     return;
   }
@@ -62,6 +70,7 @@ async function loadContent() {
     const res = await fetch('data/content.json');
     if (!res.ok) throw new Error('fetch failed');
     content = await res.json();
+    if (!content.work) content.work = { ...defaultWork };
     setStatus('기본 데이터 로드됨');
   } catch {
     setStatus('데이터 로드 실패');
@@ -195,6 +204,14 @@ function renderFriends() {
   });
 }
 
+function renderWorkAdmin() {
+  if (!workFields.notice || !workFields.active || !workFields.reserved) return;
+  const work = content.work || { ...defaultWork };
+  workFields.notice.value = work.notice || '';
+  workFields.active.value = Array.isArray(work.active) ? work.active.join('\n') : '';
+  workFields.reserved.value = Array.isArray(work.reserved) ? work.reserved.join('\n') : '';
+}
+
 function readGalleryInputs(oldList) {
   return [...galleryList.querySelectorAll('.admin-item')].map((item) => {
     const read = (name) => item.querySelector(`[data-field="${name}"]`)?.value.trim() || '';
@@ -232,12 +249,29 @@ function readFriendInputs(oldList) {
   });
 }
 
+function readWorkInputs() {
+  if (!workFields.notice || !workFields.active || !workFields.reserved) {
+    return { ...defaultWork };
+  }
+  const notice = workFields.notice?.value.trim() || '';
+  const active = workFields.active?.value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const reserved = workFields.reserved?.value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return { notice, active, reserved };
+}
+
 function updateContentFromInputs() {
   const oldGallery = content.gallery;
   const oldFriends = content.friends;
   content.gallery = readGalleryInputs(oldGallery);
   content.timeline = readTimelineInputs();
   content.friends = readFriendInputs(oldFriends);
+  content.work = readWorkInputs();
 }
 
 function saveLocal() {
@@ -269,6 +303,7 @@ function resetLocal() {
 function renderAll() {
   renderGallery();
   renderTimeline();
+  renderWorkAdmin();
   renderFriends();
 }
 
