@@ -13,7 +13,6 @@ const guestForm = document.querySelector('.guest-form');
 const guestName = document.querySelector('#guest-name');
 const guestMsg = document.querySelector('#guest-msg');
 const guestList = document.querySelector('.guest-list');
-const guestBtn = document.querySelector('.guest-btn');
 const storageKey = 'guestbookEntries';
 const guestbookEndpoint = '/guestbook';
 const workBoards = document.querySelectorAll('[data-work-board]');
@@ -162,15 +161,13 @@ if (guestForm) {
   });
 }
 
-if (guestBtn) {
-  guestBtn.addEventListener('click', handleSubmit);
-}
 
 const weatherText = document.querySelector('.weather-text');
 const weatherHigh = document.querySelector('.weather-high');
 const weatherLow = document.querySelector('.weather-low');
 const visitTodayTargets = document.querySelectorAll('[data-visit-today]');
 const visitTotalTargets = document.querySelectorAll('[data-visit-total]');
+const noticeList = document.querySelector('[data-notice-list]');
 
 const calendars = document.querySelectorAll('.mini-calendar');
 const galleryTabs = document.querySelectorAll('[data-gallery-tabs]');
@@ -526,6 +523,25 @@ function renderFriends(items) {
     .join('');
 }
 
+function renderNotices(items) {
+  if (!noticeList) return;
+  const list = Array.isArray(items) ? items : [];
+  if (!list.length) {
+    noticeList.innerHTML = '<div class="notice-item"><div class="notice-body">등록된 공지사항이 없어요.</div></div>';
+    return;
+  }
+  noticeList.innerHTML = list
+    .map(
+      (item) => `
+        <div class="notice-item">
+          ${item.date ? `<div class="notice-date">${item.date}</div>` : ''}
+          <div class="notice-body">${item.body || ''}</div>
+        </div>
+      `
+    )
+    .join('');
+}
+
 function normalizeWorkList(list) {
   if (!Array.isArray(list)) return [];
   return list.map((item) => String(item || '').trim()).filter(Boolean);
@@ -636,7 +652,8 @@ async function loadContentAndRender() {
     gallery: Array.isArray(data?.gallery) && data.gallery.length ? data.gallery : fileData?.gallery || [],
     timeline: Array.isArray(data?.timeline) && data.timeline.length ? data.timeline : fileData?.timeline || [],
     friends: Array.isArray(data?.friends) && data.friends.length ? data.friends : fileData?.friends || [],
-    work: data?.work || fileData?.work || null
+    work: data?.work || fileData?.work || null,
+    notices: Array.isArray(data?.notices) && data.notices.length ? data.notices : fileData?.notices || []
   };
 
   renderHomeGallery(merged.gallery);
@@ -644,6 +661,7 @@ async function loadContentAndRender() {
   renderModals(merged.gallery);
   if (Array.isArray(merged.timeline)) renderTimeline(merged.timeline);
   if (Array.isArray(merged.friends)) renderFriends(merged.friends);
+  if (Array.isArray(merged.notices)) renderNotices(merged.notices);
   renderWork(merged.work);
   setupGalleryTabs();
 }
