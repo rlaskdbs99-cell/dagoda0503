@@ -36,6 +36,23 @@
 
 ---
 
+## Recent Updates (2026-02-25)
+- 방명록 서버 저장 추가
+  - `functions/guestbook.js` (Pages KV 기반 저장)
+  - `script.js`에서 `/guestbook` 연동
+  - 로컬 테스트용 `/guestbook` 엔드포인트 추가 (`server.js`)
+- 공지사항 구조 개선
+  - `data/content.json`에 `notices` 추가
+  - `notice.html` 목록을 데이터 렌더링으로 전환
+- 관리자 페이지 확장
+  - `work` 섹션(공지/진행/예약) 편집 추가
+  - 관리 데이터는 `localStorage`에 저장되며 배포 반영 시 `content.json` 덮어쓰기 필요
+- 홈 화면 공지 개선
+  - 문구 업데이트 + 줄바꿈/줄간격 조정
+  - 공지 박스 강조 스타일 보강
+- 타임라인 표시 보완
+  - 로컬 데이터가 비어 있을 때 `data/content.json`과 병합해서 표시
+
 ## Today Summary (What Was Done)
 - Git 설치 인식 확인 완료: `git version 2.53.0.windows.1`
 - 프로젝트 폴더 Git 초기화 완료 (`git init`)

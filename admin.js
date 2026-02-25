@@ -30,6 +30,7 @@ const defaultGalleryItem = {
   updated: '',
   link: '',
   description: [],
+  hashtags: [],
   images: []
 };
 
@@ -90,6 +91,17 @@ function createField(labelText, fieldName, value, type = 'input') {
   return label;
 }
 
+function parseHashtagsText(raw) {
+  if (!raw) return [];
+  return raw
+    .split(/\r?\n|,/)
+    .flatMap((chunk) => chunk.split(/\s+/))
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+    .map((tag) => tag.replace(/^#+/, ''))
+    .filter(Boolean);
+}
+
 function renderGallery() {
   if (!galleryList) return;
   galleryList.innerHTML = '';
@@ -126,10 +138,12 @@ function renderGallery() {
     grid.appendChild(createField('링크', 'link', item.link));
 
     const desc = createField('설명 (줄바꿈)', 'description', (item.description || []).join('\n'), 'textarea');
+    const tags = createField('해시태그 (줄바꿈/공백)', 'hashtags', (item.hashtags || []).join('\n'), 'textarea');
 
     wrap.appendChild(header);
     wrap.appendChild(grid);
     wrap.appendChild(desc);
+    wrap.appendChild(tags);
     galleryList.appendChild(wrap);
   });
 }
@@ -216,6 +230,7 @@ function readGalleryInputs(oldList) {
   return [...galleryList.querySelectorAll('.admin-item')].map((item) => {
     const read = (name) => item.querySelector(`[data-field="${name}"]`)?.value.trim() || '';
     const descriptionRaw = read('description');
+    const hashtagsRaw = read('hashtags');
     const index = Number(item.getAttribute('data-index') || '0');
     const old = oldList[index] || {};
     return {
@@ -228,6 +243,7 @@ function readGalleryInputs(oldList) {
       updated: read('updated'),
       link: read('link'),
       description: descriptionRaw ? descriptionRaw.split('\n').filter(Boolean) : [],
+      hashtags: hashtagsRaw ? parseHashtagsText(hashtagsRaw) : Array.isArray(old.hashtags) ? old.hashtags : [],
       images: Array.isArray(old.images) ? old.images : []
     };
   });

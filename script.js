@@ -17,6 +17,13 @@ const storageKey = 'guestbookEntries';
 const guestbookEndpoint = '/guestbook';
 const workBoards = document.querySelectorAll('[data-work-board]');
 const workNoticeTargets = document.querySelectorAll('[data-work-notice]');
+const contactForm = document.querySelector('[data-contact-form]');
+const contactHelp = document.querySelector('[data-contact-help]');
+const FONT_SCALE_KEY = 'portfolioUiScale';
+const FONT_SCALE_DEFAULT = 1;
+const FONT_SCALE_MIN = 0.9;
+const FONT_SCALE_MAX = 1.15;
+const FONT_SCALE_STEP = 0.05;
 const WORK_DEFAULTS = { activeSlots: 3, reservedSlots: 5, emptyLabel: '비어 있음' };
 
 function formatDate(date) {
@@ -55,6 +62,101 @@ function getEntries() {
 
 function saveEntries(entries) {
   localStorage.setItem(storageKey, JSON.stringify(entries));
+}
+
+function clampFontScale(value) {
+  const next = Number(value);
+  if (!Number.isFinite(next)) return FONT_SCALE_DEFAULT;
+  return Math.min(FONT_SCALE_MAX, Math.max(FONT_SCALE_MIN, next));
+}
+
+function roundFontScale(value) {
+  return Math.round(clampFontScale(value) / FONT_SCALE_STEP) * FONT_SCALE_STEP;
+}
+
+function applyFontScale(value) {
+  const scale = roundFontScale(value);
+  const page = document.querySelector('.page');
+  if (page) page.style.zoom = String(scale);
+
+  document.querySelectorAll('[data-font-scale-value]').forEach((el) => {
+    el.textContent = `${Math.round(scale * 100)}%`;
+  });
+  document.querySelectorAll('[data-font-scale-range]').forEach((el) => {
+    if (el instanceof HTMLInputElement) el.value = String(Math.round(scale * 100));
+  });
+  return scale;
+}
+
+function loadFontScale() {
+  const raw = localStorage.getItem(FONT_SCALE_KEY);
+  if (!raw) return FONT_SCALE_DEFAULT;
+  return roundFontScale(Number(raw));
+}
+
+function saveFontScale(value) {
+  localStorage.setItem(FONT_SCALE_KEY, String(roundFontScale(value)));
+}
+
+function setupFontScaleWidget() {
+  const moodBoxes = document.querySelectorAll('.mood-box');
+  if (!moodBoxes.length) return;
+
+  const initialScale = applyFontScale(loadFontScale());
+
+  moodBoxes.forEach((moodBox) => {
+    if (moodBox.nextElementSibling?.classList?.contains('font-scale-box')) return;
+
+    const widget = document.createElement('div');
+    widget.className = 'font-scale-box';
+    widget.setAttribute('data-font-scale-widget', 'true');
+    widget.innerHTML = `
+      <div class="font-scale-head">
+        <span class="font-scale-title">text size</span>
+        <span class="font-scale-value" data-font-scale-value>${Math.round(initialScale * 100)}%</span>
+      </div>
+      <div class="font-scale-controls">
+        <button type="button" class="font-scale-btn" data-font-scale-action="down" aria-label="글자 크기 줄이기">A-</button>
+        <input
+          class="font-scale-range"
+          data-font-scale-range
+          type="range"
+          min="${Math.round(FONT_SCALE_MIN * 100)}"
+          max="${Math.round(FONT_SCALE_MAX * 100)}"
+          step="${Math.round(FONT_SCALE_STEP * 100)}"
+          value="${Math.round(initialScale * 100)}"
+          aria-label="글자 크기 조절"
+        />
+        <button type="button" class="font-scale-btn" data-font-scale-action="up" aria-label="글자 크기 키우기">A+</button>
+        <button type="button" class="font-scale-btn is-reset" data-font-scale-action="reset" aria-label="글자 크기 기본값">기본</button>
+      </div>
+    `;
+
+    const changeScale = (next) => {
+      const scale = applyFontScale(next);
+      saveFontScale(scale);
+    };
+
+    widget.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const action = target.getAttribute('data-font-scale-action');
+      if (!action) return;
+      const current = loadFontScale();
+      if (action === 'down') changeScale(current - FONT_SCALE_STEP);
+      if (action === 'up') changeScale(current + FONT_SCALE_STEP);
+      if (action === 'reset') changeScale(FONT_SCALE_DEFAULT);
+    });
+
+    const range = widget.querySelector('[data-font-scale-range]');
+    if (range instanceof HTMLInputElement) {
+      range.addEventListener('input', () => {
+        changeScale(Number(range.value) / 100);
+      });
+    }
+
+    moodBox.insertAdjacentElement('afterend', widget);
+  });
 }
 
 function normalizeEntries(entries) {
@@ -160,6 +262,64 @@ if (guestForm) {
     handleSubmit();
   });
 }
+
+function setContactHelp(message, tone = '') {
+  if (!contactHelp) return;
+  contactHelp.textContent = message;
+  contactHelp.classList.remove('is-error', 'is-success');
+  if (tone) contactHelp.classList.add(tone);
+}
+
+function setupContactForm() {
+  if (!contactForm) return;
+
+  contactForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    if (!contactForm.reportValidity()) {
+      setContactHelp('필수 항목을 먼저 확인해 주세요.', 'is-error');
+      return;
+    }
+
+    const formData = new FormData(contactForm);
+    const name = String(formData.get('name') || '').trim();
+    const contact = String(formData.get('contact') || '').trim();
+    const type = String(formData.get('type') || '').trim();
+    const reference = String(formData.get('reference') || '').trim();
+    const message = String(formData.get('message') || '').trim();
+    const agreed = formData.get('agree') === 'on';
+
+    if (!name || !contact || !type || !message || !agreed) {
+      setContactHelp('필수 항목을 모두 입력하고 동의 체크를 해 주세요.', 'is-error');
+      return;
+    }
+
+    const subject = `[Portfolio 문의] ${type} / ${name}`;
+    const bodyLines = [
+      '안녕하세요, work 페이지 문의폼으로 보냅니다.',
+      '',
+      `이름/닉네임: ${name}`,
+      `연락처: ${contact}`,
+      `문의 종류: ${type}`,
+      `참고 링크: ${reference || '(없음)'}`,
+      '',
+      '[문의 내용]',
+      message,
+      '',
+      '---',
+      '상세 작업 안내는 notice 페이지를 확인했습니다.'
+    ];
+    const body = bodyLines.join('\n');
+    const mailto =
+      `mailto:dagoda0503@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    setContactHelp('메일 앱을 엽니다. 열리지 않으면 notice 안내 확인 후 직접 메일로 보내 주세요.', 'is-success');
+    window.location.href = mailto;
+  });
+}
+
+setupContactForm();
+setupFontScaleWidget();
 
 
 const weatherText = document.querySelector('.weather-text');
@@ -527,9 +687,11 @@ function renderNotices(items) {
   if (!noticeList) return;
   const list = Array.isArray(items) ? items : [];
   if (!list.length) {
-    noticeList.innerHTML = '<div class="notice-item"><div class="notice-body">등록된 공지사항이 없어요.</div></div>';
+    noticeList.innerHTML = '';
+    noticeList.style.display = 'none';
     return;
   }
+  noticeList.style.display = '';
   noticeList.innerHTML = list
     .map(
       (item) => `
@@ -585,6 +747,20 @@ function renderWork(work) {
   });
 }
 
+function normalizeHashtags(value) {
+  const list = Array.isArray(value)
+    ? value
+    : typeof value === 'string'
+      ? value.split(/\s+/)
+      : [];
+  return list
+    .map((tag) => String(tag || '').trim())
+    .filter(Boolean)
+    .map((tag) => tag.replace(/^#+/, ''))
+    .filter(Boolean)
+    .map((tag) => `#${tag}`);
+}
+
 function renderModals(items) {
   document.querySelectorAll('.modal').forEach((modal) => modal.remove());
   const fragment = document.createDocumentFragment();
@@ -598,6 +774,12 @@ function renderModals(items) {
 
     const metaLine = buildMetaLine(item);
     const body = (item.description || []).map((line) => `<p>${line}</p>`).join('');
+    const hashtags = normalizeHashtags(item.hashtags || item.tags || item.tag);
+    const hashtagsMarkup = hashtags.length
+      ? `<div class="post-tags" aria-label="해시태그">${hashtags
+          .map((tag) => `<span class="post-tag">${tag}</span>`)
+          .join('')}</div>`
+      : '';
     const galleryImages = item.images?.length ? item.images : item.thumb ? [item.thumb] : [];
     const slides = [];
     for (let i = 0; i < galleryImages.length; i += 3) {
@@ -629,6 +811,7 @@ function renderModals(items) {
         <div class="post-detail">
           <div class="post-title">${item.title}</div>
           <div class="post-meta">${metaLine}</div>
+          ${hashtagsMarkup}
           <div class="post-body">${body}</div>
           ${linkMarkup}
           ${slider}
